@@ -18,7 +18,8 @@ trait ApiResponser
     {
         return response()->json([
             'status' => 'success',
-            'data' => $data
+            'data' => $data,
+            'message' => $message
         ], $code);
     }
     /**
@@ -28,9 +29,8 @@ trait ApiResponser
      * @return JsonResponse
      */
 
-    protected function failResponse($data = [], int $code = 200, string $message = "Validation fail"): JsonResponse
+    protected function failResponse(string $message = "", $data = [], int $code = 200): JsonResponse
     {
-        if($message == "Validation fail") $message = __('validation.main.fail');
         return response()->json([
             'status' => 'fail',
             'data_fail' => $data,

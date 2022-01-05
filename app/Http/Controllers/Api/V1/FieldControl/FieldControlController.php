@@ -43,7 +43,7 @@ class FieldControlController extends Controller
             "id" => $device->id,
             "id_pegawai" => $request->id_pegawai,
             "mac_address" => $request->mac_address,
-            "relasi_tabel" => 'qc_stafrequest->f_unions',
+            "relasi_tabel" => 'qc_staff_unions',
             "metode" => StatusUtils::DOWNLOAD,
             "menu" => StatusUtils::ALL
         ];

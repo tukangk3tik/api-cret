@@ -2,8 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Models\BreedPalma;
+use App\Models\BreedPolen;
 use App\Models\QcStaffUnion;
+use App\Models\SeedPalma;
+use App\Models\SeedPolen;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class FieldControlRepository {
 
@@ -28,7 +34,6 @@ class FieldControlRepository {
                     ['table_production', '=', $value['table_production']],
                     ['id_production', '=', $value['id_production']],
                     ['jenis_qc', '=', $value['jenis_qc']],
-                    ['table_qc', '=', $value['table_qc']],
                     ['id_qc', '=', $value['id_qc']]
                 ])
                 ->get();
@@ -40,14 +45,16 @@ class FieldControlRepository {
             
             $qc = new QcStaffUnion();
 
+            $tableQcStaff = self::setTableQcStaff($value['table_production'], $value['jenis_qc']);
+
             $qc->id_treefile = $value['id_treefile'];
             $qc->table_production = $value['table_production'];
             $qc->id_production = $value['id_production'];
             $qc->jenis_qc = $value['jenis_qc'];
-            $qc->table_qc = self::setTableQcStaff($value['table_production'], $value['jenis_qc']);
+            $qc->table_qc = $tableQcStaff;
             $qc->id_qc = $value['id_qc'];
-            //$qc->kode_pekerja = $value['kode_pekerja'];
-            //$qc->kode_mandor = $value['kode_mandor'];
+            $qc->kode_pekerja = self::setPekerjaQcStaff($value['table_production'], $value['id_production']);
+            $qc->kode_mandor = self::setMandorQcStaff($tableQcStaff, $value['id_qc']);
             $qc->label_sungkup = isset($value['label_sungkup']) ? $value['label_sungkup'] : null;
             $qc->label_mantri_sungkup = isset($value['label_mantri_sungkup']) ? $value['label_mantri_sungkup'] : null;
             $qc->label_polen = isset($value['label_polen']) ? $value['label_polen'] : null;
@@ -75,7 +82,7 @@ class FieldControlRepository {
         return $result;
     }
 
-    //generate table
+    //generate table qc for qc staff
     public static function setTableQcStaff(String $table, int $qc): String 
     {
         $qcStr = "";
@@ -117,4 +124,104 @@ class FieldControlRepository {
         return $tableQc;
     }
 
+
+    /**
+     * get kode  pekerja for qcstaff
+     */
+    public static function setPekerjaQcStaff(String $table, int $idProduksi): String 
+    {
+        $data = "";
+
+        switch($table) {
+            case 'seed_palma':
+
+                $getStaff = SeedPalma::select([
+                        'b.nama AS pekerja'
+                    ])
+                    ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'seed_palma.penyungkup')
+                    ->where('seed_palma.id', $idProduksi)
+                    ->get();
+                
+                $data = $getStaff->pekerja;
+
+                break;
+
+            case 'seed_polen':
+                
+                $getStaff = SeedPolen::select([
+                        'b.nama AS pekerja'
+                    ])
+                    ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'seed_polen.kodepekerja')
+                    ->where('seed_polen.id', $idProduksi)
+                    ->get();
+                
+                $data = $getStaff->pekerja;
+
+                break;
+
+            case 'breed_palma':
+                
+                $getStaff = BreedPalma::select([
+                        'b.nama AS pekerja'
+                    ])
+                    ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'breed_palma.penyungkup')
+                    ->where('breed_palma.id', $idProduksi)
+                    ->get();
+                
+                $data = $getStaff->pekerja;
+
+                break;
+
+            case 'breed_polen':
+                
+                $getStaff = BreedPolen::select([
+                        'b.nama AS pekerja'
+                    ])
+                    ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'breed_polenpanen.kdpenyerbuk')
+                    ->where('breed_polenpanen.id', $idProduksi)
+                    ->get();
+                
+                $data = $getStaff->pekerja;
+
+                break;
+        }
+
+        return $data;
+    }
+
+    /**
+     * get kode / id  mandor for qcstaff
+     */
+    public static function setMandorQcStaff(String $table, int $idQc): String 
+    {
+        $kode = "";
+
+        $kodeExist = Schema::connection('sqlsrv')
+            ->hasColumn($table, 'kodemandor');
+
+        $idExist = Schema::connection('sqlsrv')
+            ->hasColumn($table, 'kodemandor');
+
+        if ($kodeExist) {
+            $data = DB::table($table . ' AS a')
+                ->select('b.nama as mandor')
+                ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.kodemandor')
+                ->where('a.id', $idQc)
+                ->get();
+
+            $kode = $data->kodemandor;
+
+        } elseif ($idExist) {
+            $data = DB::table($table . ' AS a')
+                ->select('b.nama as mandor')
+                ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.idmandor')
+                ->where('a.id', $idQc)
+                ->get();
+
+            $kode = $data->idmandor;
+        }
+
+        return $kode;
+    }
+    
 }

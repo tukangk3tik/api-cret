@@ -21,8 +21,8 @@ class CreateQcStaffUnionsTable extends Migration
             $table->integer('jenis_qc');
             $table->string('table_qc', 20);
             $table->integer('id_qc');
-            $table->string('kode_pekerja', 10);
-            $table->string('kode_mandor', 10);
+            $table->string('kode_pekerja', 10)->nullable();
+            $table->string('kode_mandor', 10)->nullable();
             $table->tinyInteger('label_sungkup')->nullable();
             $table->tinyInteger('label_mantri_sungkup')->nullable();
             $table->tinyInteger('label_polen')->nullable();

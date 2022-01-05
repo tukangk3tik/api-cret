@@ -46,8 +46,8 @@ class FieldControlRepository {
             $qc->jenis_qc = $value['jenis_qc'];
             $qc->table_qc = $value['table_qc'];
             $qc->id_qc = $value['id_qc'];
-            $qc->kode_pekerja = $value['kode_pekerja'];
-            $qc->kode_mandor = $value['kode_mandor'];
+            //$qc->kode_pekerja = $value['kode_pekerja'];
+            //$qc->kode_mandor = $value['kode_mandor'];
             $qc->label_sungkup = $value['label_sungkup'];
             $qc->label_mantri_sungkup = $value['label_mantri_sungkup'];
             $qc->label_polen = $value['label_polen'];

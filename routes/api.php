@@ -19,16 +19,15 @@ use App\Http\Controllers\Api\V1;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::get('/', function() {
+    return 'SOCFINDO API - V1';
+});
 
-Route::prefix('v1')->group(function () {
+Route::prefix('field-control')->group(function() {
 
-    Route::prefix('field-control')->group(function() {
-
-        Route::prefix('qc-staff')->group(function() {
-            Route::get('/download', [V1\FieldControl\FieldControlController::class, 'downloadQcStaff']);
-            Route::post('/upload', [V1\FieldControl\FieldControlController::class, 'uploadQcStaff']);
-        });
-
+    Route::prefix('qc-staff')->group(function() {
+        Route::get('/download', [V1\FieldControl\FieldControlController::class, 'downloadQcStaff']);
+        Route::post('/upload', [V1\FieldControl\FieldControlController::class, 'uploadQcStaff']);
     });
 
 });

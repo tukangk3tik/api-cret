@@ -44,16 +44,16 @@ class FieldControlRepository {
             $qc->table_production = $value['table_production'];
             $qc->id_production = $value['id_production'];
             $qc->jenis_qc = $value['jenis_qc'];
-            $qc->table_qc = $value['table_qc'];
+            $qc->table_qc = self::setTableQcStaff($value['table_production'], $value['jenis_qc']);
             $qc->id_qc = $value['id_qc'];
             //$qc->kode_pekerja = $value['kode_pekerja'];
             //$qc->kode_mandor = $value['kode_mandor'];
-            $qc->label_sungkup = $value['label_sungkup'];
-            $qc->label_mantri_sungkup = $value['label_mantri_sungkup'];
-            $qc->label_polen = $value['label_polen'];
-            $qc->label_mantri_kawinan = $value['label_mantri_kawinan'];
-            $qc->jlh_janjang = $value['jlh_janjang'];
-            $qc->keterangan = $value['keterangan'];
+            $qc->label_sungkup = isset($value['label_sungkup']) ? $value['label_sungkup'] : null;
+            $qc->label_mantri_sungkup = isset($value['label_mantri_sungkup']) ? $value['label_mantri_sungkup'] : null;
+            $qc->label_polen = isset($value['label_polen']) ? $value['label_polen'] : null;
+            $qc->label_mantri_kawinan = isset($value['label_mantri_kawinan']) ? $value['label_polen'] : null;
+            $qc->jlh_janjang = isset($value['jlh_janjang']) ? $value['jlh_janjang'] : null;
+            $qc->keterangan = isset($value['keterangan']) ? $value['keterangan'] : null;
             $qc->tgl_input = $value['tgl_input'];
             $qc->kode_staff = $value['kode_staff'];
             $qc->kode_unit = $value['kode_unit'];
@@ -73,6 +73,48 @@ class FieldControlRepository {
         ];
 
         return $result;
+    }
+
+    //generate table
+    public static function setTableQcStaff(String $table, int $qc): String 
+    {
+        $qcStr = "";
+        $tableQc = "";
+
+        switch ($qc) {
+            case 1: 
+                $qcStr = "qcsatu";
+                break;
+            case 1: 
+                $qcStr = "qcdua";
+                break;
+            case 1: 
+                $qcStr = "qctiga";
+                break;
+            case 1: 
+                $qcStr = "qcempat";
+                break;
+        }
+
+        switch($table) {
+            case 'seed_palma':
+                $tableQc = "seed_" . $qcStr;
+                break;
+
+            case 'seed_polen':
+                $tableQc = "seed_polen" . $qcStr;
+                break;
+
+            case 'breed_palma':
+                $tableQc = "breed_" . $qcStr;
+                break;
+
+            case 'breed_polen':
+                $tableQc = "breed_polen" . $qcStr;
+                break;
+        }
+
+        return $tableQc;
     }
 
 }

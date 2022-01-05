@@ -24,12 +24,14 @@ class FieldControlController extends Controller
 
     public function uploadQcStaff(Request $request) 
     {
+        $data = json_decode($request->data, true);
+
         $device = DeviceRepository::getKodeUnitDevice($request->mac_address);
         if ($device == null) {
             return $this->failResponse("Device tidak terdaftar");
         }
 
-        $countData = count($request->data);
+        $countData = count($data);
 
         //check if no data of list
         if ($countData == 0) {
@@ -40,8 +42,8 @@ class FieldControlController extends Controller
         $logParams = [
             "id" => $device->id,
             "id_pegawai" => $request->id_pegawai,
-            "mac_address" => $request['mac_address'],
-            "relasi_tabel" => 'qc_staff_unions',
+            "mac_address" => $request->mac_address,
+            "relasi_tabel" => 'qc_stafrequest->f_unions',
             "metode" => StatusUtils::DOWNLOAD,
             "menu" => StatusUtils::ALL
         ];
@@ -61,7 +63,7 @@ class FieldControlController extends Controller
         }
 
         //insert all uploaded data
-        $insertData = $this->fieldControlRepository->insertQcStaff($request->data);
+        $insertData = $this->fieldControlRepository->insertQcStaff($data);
 
         if ($insertData['count'] == 0) {
             return $this->failResponse("Seluruh QC Staff data gagal diupload");

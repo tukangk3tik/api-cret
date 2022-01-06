@@ -54,7 +54,7 @@ class FieldControlRepository {
             $qc->table_qc = $tableQcStaff;
             $qc->id_qc = $value['id_qc'];
             $qc->kode_pekerja = self::setPekerjaQcStaff($value['table_production'], $value['id_production']);
-            $qc->kode_mandor = self::setMandorQcStaff($tableQcStaff, $value['id_qc']);
+            $qc->kode_mandor = $value['kode_mandor']; //self::setMandorQcStaff($tableQcStaff, $value['id_qc']);
             $qc->label_sungkup = isset($value['label_sungkup']) ? $value['label_sungkup'] : null;
             $qc->label_mantri_sungkup = isset($value['label_mantri_sungkup']) ? $value['label_mantri_sungkup'] : null;
             $qc->label_polen = isset($value['label_polen']) ? $value['label_polen'] : null;
@@ -136,52 +136,56 @@ class FieldControlRepository {
             case 'seed_palma':
 
                 $getStaff = SeedPalma::select([
-                        'b.nama AS pekerja'
+                        'b.kode'
                     ])
                     ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'seed_palma.penyungkup')
                     ->where('seed_palma.id', $idProduksi)
-                    ->get();
+                    ->get()
+                    ->first();
                 
-                $data = $getStaff->pekerja;
+                $data = $getStaff->kode;
 
                 break;
 
             case 'seed_polen':
                 
                 $getStaff = SeedPolen::select([
-                        'b.nama AS pekerja'
+                        'b.kode'
                     ])
                     ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'seed_polen.kodepekerja')
                     ->where('seed_polen.id', $idProduksi)
-                    ->get();
+                    ->get()
+                    ->first();
                 
-                $data = $getStaff->pekerja;
+                $data = $getStaff->kode;
 
                 break;
 
             case 'breed_palma':
                 
                 $getStaff = BreedPalma::select([
-                        'b.nama AS pekerja'
+                        'b.kode'
                     ])
                     ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'breed_palma.penyungkup')
                     ->where('breed_palma.id', $idProduksi)
-                    ->get();
+                    ->get()
+                    ->first();
                 
-                $data = $getStaff->pekerja;
+                $data = $getStaff->kode;
 
                 break;
 
             case 'breed_polen':
                 
                 $getStaff = BreedPolen::select([
-                        'b.nama AS pekerja'
+                        'b.kode'
                     ])
                     ->leftJoin('master_pegawai AS b', 'b.kode', '=', 'breed_polenpanen.kdpenyerbuk')
                     ->where('breed_polenpanen.id', $idProduksi)
-                    ->get();
+                    ->get()
+                    ->first();
                 
-                $data = $getStaff->pekerja;
+                $data = $getStaff->kode;
 
                 break;
         }
@@ -192,36 +196,36 @@ class FieldControlRepository {
     /**
      * get kode / id  mandor for qcstaff
      */
-    public static function setMandorQcStaff(String $table, int $idQc): String 
-    {
-        $kode = "";
+    // public static function setMandorQcStaff(String $table, int $idQc): String 
+    // {
+    //     $kode = "";
 
-        $kodeExist = Schema::connection('sqlsrv')
-            ->hasColumn($table, 'kodemandor');
+    //     $kodeExist = Schema::connection('sqlsrv')
+    //         ->hasColumn($table, 'kodemandor');
 
-        $idExist = Schema::connection('sqlsrv')
-            ->hasColumn($table, 'kodemandor');
+    //     $idExist = Schema::connection('sqlsrv')
+    //         ->hasColumn($table, 'kodemandor');
 
-        if ($kodeExist) {
-            $data = DB::table($table . ' AS a')
-                ->select('b.nama as mandor')
-                ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.kodemandor')
-                ->where('a.id', $idQc)
-                ->get();
+    //     if ($kodeExist) {
+    //         $data = DB::table($table . ' AS a')
+    //             ->select('b.nama as mandor')
+    //             ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.kodemandor')
+    //             ->where('a.id', $idQc)
+    //             ->get();
 
-            $kode = $data->kodemandor;
+    //         $kode = $data->kodemandor;
 
-        } elseif ($idExist) {
-            $data = DB::table($table . ' AS a')
-                ->select('b.nama as mandor')
-                ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.idmandor')
-                ->where('a.id', $idQc)
-                ->get();
+    //     } elseif ($idExist) {
+    //         $data = DB::table($table . ' AS a')
+    //             ->select('b.nama as mandor')
+    //             ->leftJoin('b.master_pegawai', 'b.id', '=', 'a.idmandor')
+    //             ->where('a.id', $idQc)
+    //             ->get();
 
-            $kode = $data->idmandor;
-        }
+    //         $kode = $data->idmandor;
+    //     }
 
-        return $kode;
-    }
+    //     return $kode;
+    // }
     
 }

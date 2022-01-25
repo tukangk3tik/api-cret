@@ -15,7 +15,7 @@ class UpdatePatologiTable extends Migration
     {
         Schema::table('pat_inoculation', function (Blueprint $table) {
             $table->integer('jenis_trial')->nullable();
-            $table->string('idisolate', 50)->nullable();
+            //$table->string('idisolate')->nullable()->change(); //manual update
         });
 
         Schema::table('pat_inoculation_det', function (Blueprint $table) {
@@ -51,18 +51,6 @@ class UpdatePatologiTable extends Migration
             $table->integer('id_master')->nullable();
         });
 
-        Schema::table('pat_screening_other', function (Blueprint $table) {
-            $table->integer('idisolate')->nullable();
-            $table->integer('treatment')->nullable();
-        });
-
-        Schema::table('pat_nurseries_infection_report', function (Blueprint $table) {
-            $table->string('jenis', 5)->nullable();
-        });
-
-        Schema::table('pat_nurseries_cross_record', function (Blueprint $table) {
-            $table->string('jenis', 5)->nullable();
-        });
     }
 
     /**
@@ -74,7 +62,7 @@ class UpdatePatologiTable extends Migration
     {
         Schema::table('pat_inoculation', function (Blueprint $table) {
             $table->dropColumn('jenis_trial');
-            $table->dropColumn('idisolate');
+            //$table->dropColumn('idisolate');
         });
 
         Schema::table('pat_inoculation_det', function (Blueprint $table) {
@@ -110,17 +98,5 @@ class UpdatePatologiTable extends Migration
             $table->dropColumn('id_master');
         });
 
-        Schema::table('pat_screening_other', function (Blueprint $table) {
-            $table->dropColumn('idisolate');
-            $table->dropColumn('treatment');
-        });
-
-        Schema::table('pat_nurseries_infection_report', function (Blueprint $table) {
-            $table->dropColumn('jenis');
-        });
-
-        Schema::table('pat_nurseries_cross_record', function (Blueprint $table) {
-            $table->dropColumn('jenis');
-        });
     }
 }

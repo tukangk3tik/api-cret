@@ -92,13 +92,13 @@ class FieldControlRepository {
             case 1: 
                 $qcStr = "qcsatu";
                 break;
-            case 1: 
+            case 2: 
                 $qcStr = "qcdua";
                 break;
-            case 1: 
+            case 3: 
                 $qcStr = "qctiga";
                 break;
-            case 1: 
+            case 4: 
                 $qcStr = "qcempat";
                 break;
         }

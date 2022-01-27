@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\FieldControl;
+namespace App\Http\Controllers\Api\FieldControl;
 
 use App\Helpers\DefaultValue;
 use App\Helpers\StatusUtils;
 use App\Http\Controllers\Controller;
 use App\Models\QcStaffUnion;
-use App\Repositories\DeviceRepository;
 use App\Repositories\FieldControlRepository;
+use App\Services\DeviceService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -26,7 +26,7 @@ class FieldControlController extends Controller
     {
         $data = json_decode($request->data, true);
 
-        $device = DeviceRepository::getKodeUnitDevice($request->mac_address);
+        $device = DeviceService::getKodeUnitDevice($request->mac_address);
         if ($device == null) {
             return $this->failResponse("Device tidak terdaftar");
         }
@@ -49,12 +49,12 @@ class FieldControlController extends Controller
         ];
 
         //get last download
-        $download = DeviceRepository::getLastSync($logParams);
+        $download = DeviceService::getLastSync($logParams);
         $lastDownloadAt = ($download != null) ? $download->sync_at : DefaultValue::SYNC_DEFAULT_DATE;
 
         //set metode to upload and get latest upload
         $logParams['metode'] = StatusUtils::UPLOAD;
-        $upload = DeviceRepository::getLastSync($logParams);
+        $upload = DeviceService::getLastSync($logParams);
         $lastUploadAt = ($upload != null) ? $upload->sync_at : DefaultValue::SYNC_DEFAULT_DATE;
 
         //return message to download before upload
@@ -75,7 +75,7 @@ class FieldControlController extends Controller
         }
 
         //save log
-        DeviceRepository::storeSyncDevice($logParams);
+        DeviceService::storeSyncDevice($logParams);
 
         return $this->successResponse($insertData['data'], "Data berhasil diupload");
     }
@@ -83,7 +83,7 @@ class FieldControlController extends Controller
     public function downloadQcStaff(Request $request) 
     {
         //check if device registered
-        $device = DeviceRepository::getKodeUnitDevice($request->mac_address);
+        $device = DeviceService::getKodeUnitDevice($request->mac_address);
         if ($device == null) {
             return $this->failResponse("Device tidak terdaftar");
         }
@@ -102,7 +102,7 @@ class FieldControlController extends Controller
         $params['kode_unit'] = $device->kodeunit;
         $params['last_sync'] = DefaultValue::SYNC_DEFAULT_DATE;
 
-        $getLastLog = DeviceRepository::getLastSync($logParams);
+        $getLastLog = DeviceService::getLastSync($logParams);
         if($getLastLog != null) {
             $params['last_sync'] = $getLastLog->sync_at;
         }
@@ -121,7 +121,7 @@ class FieldControlController extends Controller
         }
 
         //save log
-        DeviceRepository::storeSyncDevice($logParams);
+        DeviceService::storeSyncDevice($logParams);
 
         if (count($finalDt) == 0) {
             return $this->failResponse("Tidak ada data baru");

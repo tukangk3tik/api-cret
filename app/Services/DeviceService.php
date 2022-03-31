@@ -1,12 +1,13 @@
 <?php 
 
-namespace App\Repositories;
+namespace App\Services;
 
+use App\Helpers\DefaultValue;
 use App\Models\SyncDevice;
 use App\Models\SyncDeviceLog;
 use Carbon\Carbon;
 
-class DeviceRepository {
+class DeviceService {
 
     //get device data by mac
     public static function getDevice(String $mac) : SyncDevice {
@@ -24,8 +25,10 @@ class DeviceRepository {
             ])
             ->orderBy('id', 'desc')
             ->first();
-        
-        return $lastSync;
+            
+        $lastDate = ($lastSync != null) ? $lastSync->sync_at : DefaultValue::SYNC_DEFAULT_DATE;
+
+        return $lastDate;
     }
 
     //get device data with unit
